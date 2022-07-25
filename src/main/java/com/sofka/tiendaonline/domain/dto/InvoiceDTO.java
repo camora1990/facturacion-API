@@ -48,7 +48,7 @@ public class InvoiceDTO {
 
     @JsonManagedReference(value = "invoice-details")
     @OneToMany(mappedBy = "invoice")
-    private List<DetailsDTO> detalles = new ArrayList<>();
+    private List<DetailsDTO> details = new ArrayList<>();
 
 
 

@@ -6,10 +6,10 @@ import com.sofka.tiendaonline.repository.DetailsRepository;
 import com.sofka.tiendaonline.repository.InvoiceDTORepository;
 import com.sofka.tiendaonline.repository.InvoiceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -31,7 +31,8 @@ public class InvoiceService{
         return invoiceDTORepository.findAll();
     }
 
-    public Invoice create(Invoice invoice){
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public Invoice create(Invoice invoice ) throws Exception {
         var newInvoice = invoiceRepository.save(invoice);
         var details = invoice.getDetails().stream().map(ele -> {
             ele.setDiscount(10);
@@ -40,6 +41,9 @@ public class InvoiceService{
             ele.setVat(10);
             return ele;
         }).toList();
+        if (details.isEmpty()){
+            throw new Exception("Details are required");
+        }
         detailsRepository.saveAll(details);
         return newInvoice;
     }
